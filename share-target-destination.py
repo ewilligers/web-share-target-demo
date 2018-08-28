@@ -15,6 +15,20 @@ def escape(text):
 
 
 class MainPage(RequestHandler):
+    def get(self):
+        main_template = JINJA_ENVIRONMENT.get_template('share-target-destination.template.html')
+
+
+        main_template_values = {
+          'generation_location': 'server-side',
+          'received_title': escape(self.request.get('received_title', '')),
+          'received_text': escape(self.request.get('received_text', '')),
+          'received_url': escape(self.request.get('received_url', ''))
+        }
+
+        print(main_template_values)
+        self.response.write(main_template.render(main_template_values))
+
     def post(self):
         main_template = JINJA_ENVIRONMENT.get_template('share-target-destination.template.html')
 
