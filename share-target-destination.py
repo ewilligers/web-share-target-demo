@@ -10,9 +10,8 @@ JINJA_ENVIRONMENT = Environment(
     extensions=['jinja2.ext.autoescape'])
 
 
-# How should we handle " in the text?
 def escape(text):
-  return text
+  return text.replace('&', '&amp;').replace('"', '&quot;');
 
 
 class MainPage(RequestHandler):

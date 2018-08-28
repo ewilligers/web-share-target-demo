@@ -2,6 +2,10 @@
 
 (() => {
 
+function escapeQuotes(text) {
+  return text.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+}
+
 let handleClientSide = true;
 
 // Promise-based version of FileReader.readAsText.
@@ -34,9 +38,9 @@ self.addEventListener('fetch', event => {
       };
 
       let body = page.replace('{{generation_location}}', 'client-side')
-                     .replace('{{received_title}}', title)
-                     .replace('{{received_text}}', text)
-                     .replace('{{received_url}}', url);
+                     .replace('{{received_title}}', escapeQuotes(title))
+                     .replace('{{received_text}}', escapeQuotes(text))
+                     .replace('{{received_url}}', escapeQuotes(url));
 
       const file_fields = ['received_html_files', 'received_css_files'];
 
