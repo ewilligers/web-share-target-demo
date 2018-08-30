@@ -26,7 +26,7 @@ self.addEventListener('fetch', event => {
     event.respondWith((async () => {
       const response = await fetch('share-target-destination.template.html');
       const page = await response.text();
-      const formData = await event.request.formData();
+      const formData = (event.request.method === 'POST') ? await event.request.formData() : (new URL(event.request.url)).searchParams;
       const title = formData.get('received_title') || '';
       const text = formData.get('received_text') || '';
       const url = formData.get('received_url') || '';
@@ -86,23 +86,24 @@ self.addEventListener('fetch', event => {
     })());
   }
 
-  // console.log('Received fetch event: ' + event.request.method + ' ' + event.request.url);
+  console.log('Received fetch event: ' + event.request.method + ' ' + event.request.url);
+  const pathname = (new URL(event.request.url)).pathname;
   if (event.request.method === 'POST') {
-    const url = event.request.url;
-    if (url.endsWith('/client')) {
+    if (pathname === '/client') {
       handleClientSide = true;
       event.respondWith(
         fetch('share-target-destination.template.html'));
       return;
-    } else if (url.endsWith('/server')) {
+    } else if (pathname === '/server') {
       handleClientSide = false;
       event.respondWith(
         fetch('share-target-destination.template.html'));
       return;
-    } else if (handleClientSide) {
-      respondToShare(event);
-      return;
     }
+  }
+  if (handleClientSide && pathname === '/share-target-destination.html') {
+    respondToShare(event);
+    return;
   }
   event.respondWith(
     caches.match(event.request)
