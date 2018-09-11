@@ -1,7 +1,13 @@
 'use strict';
 
 (() => {
+  let method = 'manifest';
+
   function receiveMessage(event) {
+    if (['manifest', 'GET', 'POST'].includes(event.data)) {
+      method = event.data;
+      return;
+    }
     const manifestURL = document.querySelector('link[rel=manifest]').href;
 
     // console.log('Fetching manifest ' + manifestURL);
@@ -13,9 +19,9 @@
     .then((myJson) => {
       if (myJson.share_target && myJson.share_target.action && myJson.share_target.params) {
         const action = myJson.share_target.action;
-        const method = (myJson.share_target.method || '').toUpperCase();
+        const shareTargetMethod = (myJson.share_target.method || '').toUpperCase();
         const params = myJson.share_target.params;
-        if (method === 'POST') {
+        if (method === 'POST'|| (method === 'manifest' && shareTargetMethod === 'POST')) {
           // Use XMLHttpRequest.
           const formData = new FormData();
           for (let key of ['title', 'text', 'url']) {

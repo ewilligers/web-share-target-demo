@@ -31,6 +31,18 @@
           <td><input type="radio" id="server" name="side" value="server"></input></td>
           <td><label for="server">Handle on server side</label></td>
         </tr>
+        <tr>
+          <td><input type="radio" id="manifest" name="method" value="manifest" checked></input></td>
+          <td><label for="manifest">Use request method from manifest</label></td>
+        </tr>
+        <tr>
+          <td><input type="radio" id="get" name="method" value="GET"></input></td>
+          <td><label for="get">Use GET requests</label></td>
+        </tr>
+        <tr>
+          <td><input type="radio" id="post" name="method" value="POST"></input></td>
+          <td><label for="post">Use POST requests</label></td>
+        </tr>
       </table>
     </form>
     <script>
@@ -42,6 +54,13 @@
       }
       client.addEventListener('click', handleSide);
       server.addEventListener('click', handleSide);
+
+      function handleMethod(event) {
+        window.parent.postMessage(event.target.value, '*');
+      }
+      manifest.addEventListener('click', handleMethod);
+      get.addEventListener('click', handleMethod);
+      post.addEventListener('click', handleMethod);
     </script>
   </section>
   <iframe id="target" src=""></iframe>
