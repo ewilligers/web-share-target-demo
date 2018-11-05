@@ -9,10 +9,14 @@ function escapeQuotes(text) {
 let handleClientSide = true;
 
 // Promise-based version of FileReader.readAsText.
-function readAsTextPromise(fileReader, blob, encoding) {
+function readAsFilePromise(fileReader, field, blob, encoding) {
   return new Promise(resolve => {
     fileReader.onload = e => resolve(e.target.result);
-    fileReader.readAsText(blob, encoding);
+    if (field === 'received_image_files') {
+      fileReader.readAsBinaryString(blob);
+    } else {
+      fileReader.readAsText(blob, encoding);
+    }
   });
 }
 
@@ -42,7 +46,7 @@ self.addEventListener('fetch', event => {
                      .replace('{{received_text}}', escapeQuotes(text))
                      .replace('{{received_url}}', escapeQuotes(url));
 
-      const file_fields = ['received_html_files', 'received_css_files'];
+      const file_fields = ['received_html_files', 'received_css_files', 'received_image_files'];
 
       let field_index = 0;
 
@@ -72,12 +76,16 @@ self.addEventListener('fetch', event => {
         }
 
         const fileReader = new FileReader();
-        const textFromFileLoaded =
-            await readAsTextPromise(fileReader, files[index], 'UTF-8');
+        const dataFromFileLoaded =
+            await readAsFilePromise(fileReader, file_fields[field_index], files[index], 'UTF-8');
         if (index > 0) {
           file_contents += ', ';
         }
-        file_contents += textFromFileLoaded;
+        if (file_fields[field_index] === 'received_image_files') {
+          file_contents += '<img src="data:image/jpeg;base64,' + btoa(dataFromFileLoaded) + '">'
+        } else {
+          file_contents += dataFromFileLoaded;
+        }
         index += 1;
         return await progress();
       }

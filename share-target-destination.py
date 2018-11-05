@@ -4,6 +4,7 @@ from cgi import FieldStorage
 from jinja2 import Environment, FileSystemLoader
 from os import path
 from webapp2 import RequestHandler, WSGIApplication
+from base64 import b64encode
 
 JINJA_ENVIRONMENT = Environment(
     loader=FileSystemLoader(path.dirname(__file__)),
@@ -46,11 +47,16 @@ class MainPage(RequestHandler):
                            'filename': f.filename} for f in received_file if f != '']
 
           if len(attachments) > 0:
+            if field == 'received_image_files':
+              for attachment in attachments:
+                attachment['content'] = ('<img src="data:image/jpeg;base64,' +
+                                         b64encode(attachment['content']) + '">')
             file_contents = ", ".join([attachment['content'] for attachment in attachments])
             main_template_values[field] = file_contents
 
         process_attachments('received_html_files')
         process_attachments('received_css_files')
+        process_attachments('received_image_files')
 
         print(main_template_values)
         self.response.write(main_template.render(main_template_values))

@@ -16,6 +16,10 @@
         {
           "name": "received_css_files",
           "accept": "text/css"
+        },
+        {
+          "name": "received_image_files",
+          "accept": "image/*"
         }
       ]
     }
