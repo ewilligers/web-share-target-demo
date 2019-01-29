@@ -46,7 +46,7 @@ self.addEventListener('fetch', event => {
                      .replace('{{received_text}}', escapeQuotes(text))
                      .replace('{{received_url}}', escapeQuotes(url));
 
-      const file_fields = ['received_html_files', 'received_css_files', 'received_image_files'];
+      const file_fields = ['received_html_files', 'received_css_files', 'received_image_files', 'received_python_files'];
 
       let field_index = 0;
 

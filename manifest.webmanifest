@@ -20,6 +20,10 @@
         {
           "name": "received_image_files",
           "accept": "image/*"
+        },
+        {
+          "name": "received_python_files",
+          "accept": "text/x-python"
         }
       ]
     }

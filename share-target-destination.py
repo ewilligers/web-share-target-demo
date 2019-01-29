@@ -52,11 +52,13 @@ class MainPage(RequestHandler):
                 attachment['content'] = ('<img src="data:image/jpeg;base64,' +
                                          b64encode(attachment['content']) + '">')
             file_contents = ", ".join([attachment['content'] for attachment in attachments])
+            print(field + ': ' + file_contents)
             main_template_values[field] = file_contents
 
         process_attachments('received_html_files')
         process_attachments('received_css_files')
         process_attachments('received_image_files')
+        process_attachments('received_python_files')
 
         print(main_template_values)
         self.response.write(main_template.render(main_template_values))

@@ -31,8 +31,8 @@
             }
           }
 
+          let matched = [];
           if (params['files'] && event.data['files']) {
-            // TODO: never append the same file more than once.
             for (let i = 0; i < params['files'].length; ++i) {
               for (let j = 0; j < event.data['files'].length; ++j) {
                 const name = params['files'][i]['name'];
@@ -41,6 +41,9 @@
                 const filename = value.name;
                 const type = value.type;
 
+                if (matched.includes(value))
+                  continue;
+
                 // this assumes that there is a single, well-formed MIME type
                 const splitAccept = accept.split('/')
                 const splitType = type.split('/')
@@ -48,11 +51,24 @@
                 // Glob matching is not yet implemented.
                 // Accepting a list is not yet implemented.
                 // Matching a file against no more than one field is not yet implemented.
-                if (!accept || accept === '*' || accept === type || (splitAccept[1] === '*' && splitAccept[0] === splitType[0])) {
+                if (!accept || accept === '*/*' || accept === type || (splitAccept[1] === '*' && splitAccept[0] === splitType[0])) {
                   console.log('name ' + name + ', filename ' + filename + ' (' + value.size + ' bytes), type ' + value.type);
                   formData.append(name, value, filename);
+                  matched.push(value);
                 }
               }
+            }
+          }
+          if (event.data['files']) {
+            for (let j = 0; j < event.data['files'].length; ++j) {
+              const value = event.data['files'][j];
+              const filename = value.name;
+              const type = value.type;
+
+              if (matched.includes(value))
+                continue;
+
+              console.log('No match for file ' + filename + ' with type ' + value.type);
             }
           }
 
